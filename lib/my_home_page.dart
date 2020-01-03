@@ -108,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 enabled: true,
                 trailing: IconButton(
                   icon: Icon(Icons.delete),
-                  onPressed: _neverSatisfied,
+                  onPressed: alertDialog,
                 ),
                 onTap: () {}),
             ListTile(
@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 
-  Future<void> _neverSatisfied() async {
+  Future<void> alertDialog() async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -159,4 +159,6 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
   }
+  
+
 }
