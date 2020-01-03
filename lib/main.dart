@@ -9,16 +9,23 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var _title = 'Gestión Costos Operativos';
-    return MaterialApp(
-      title: _title,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: _title,),
-    );
+    return GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: MaterialApp(
+          title: _title,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            primaryColor: Colors.blue[600],
+            accentColor: Colors.lightBlue[900],
+            //primarySwatch: Colors.blue,
+          ),
+          home: MyHomePage(),
+        ));
   }
 }
-
-
-
-
