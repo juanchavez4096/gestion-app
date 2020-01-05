@@ -1,6 +1,8 @@
+import 'package:costos_operativos/my_home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:gestion_costos_operativos_app/login_page.dart';
-import 'package:gestion_costos_operativos_app/my_home_page.dart';
+
+
+
 
 void main() => runApp(MyApp());
 
