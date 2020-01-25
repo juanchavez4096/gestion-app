@@ -1,7 +1,17 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:costos_operativos/class/producto.dart';
+import 'package:costos_operativos/config/flavor_config.dart';
 import 'package:costos_operativos/details.dart';
 import 'package:costos_operativos/photo_hero.dart';
+import 'package:costos_operativos/service/productos_service.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:provider/provider.dart';
+
+import 'auth_service.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
@@ -12,18 +22,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _act = 1;
-
-  void changeState() {
+  Future<Null> scroll() async {
     setState(() {
-      _act == 1 ? _act = 2 : _act = 1;
+      products = this.getProducts();
     });
-  }
-  Future<Null> scroll() async{
-
-    await new Future.delayed(new Duration(seconds: 1));
-
     return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    products = this.getProducts();
+  }
+
+  Future<List<Producto>> products;
+
+  Future<List<Producto>> getProducts() async {
+    Response response = await ProductosService().getProducts(context);
+    List i = response.data['content'];
+    return i.map((m) => Producto.fromJson(m)).toList();
   }
 
   @override
@@ -82,107 +99,92 @@ class _MyHomePageState extends State<MyHomePage> {
               title: Text('Configuracion'),
               onTap: () {},
             ),
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Cerrar Sesión'),
+              onTap: () {
+                Provider.of<AuthService>(context, listen: false).logout();
+              },
+            ),
           ],
         ),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+          // Center is a layout widget. It takes a single child and positions it
+          // in the middle of the parent.
 
           child: Column(
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(
-                    labelText: 'Buscar Producto',
-                    contentPadding: EdgeInsets.all(5)),
-              ),
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: scroll,
-                  child: ListView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    children: ListTile.divideTiles(context: context, tiles: [
-                      ListTile(
-                          leading: PhotoHero(
-                              tagId: 'images/flippers-alpha.png',
-                              name: 'Mayonesa',
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute<void>(
-                                    builder: (BuildContext context){
-                                      return Details(tagId: 'images/flippers-alpha.png',);
-                                    }
-                                ));
-                              }
-                          ),
-                          title: const Text('Mayonesa'),
-                          subtitle: const Text('Se usa para untar'),
-                          enabled: true,
-                          trailing: IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: alertDialog,
-                          ),
-                          onTap: () {}),
-                      ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Theme.of(context).primaryColor,
-                            child: Text(
-                                'M'), // no matter how big it is, it won't overflow
-                          ),
-                          title: const Text('Mayonesa'),
-                          subtitle: const Text('Se usa para untar'),
-                          enabled: true,
-                          trailing: IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {},
-                          ),
-                          onTap: () {})
-                    ]).toList(),
+        children: <Widget>[
+          TextFormField(
+            decoration: InputDecoration(
+                labelText: 'Buscar Producto',
+                contentPadding: EdgeInsets.all(5)),
+          ),
+          FutureBuilder<List<Producto>>(
+            future: products,
+            builder: (ctx, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  snapshot.connectionState == ConnectionState.active) {
+                return Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
-                )
-              )
-            ],
-          ) /*ListView(
-
-          children: ListTile.divideTiles(context: context, tiles: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10
-              ),
-              child: TextFormField(
-                decoration: InputDecoration(labelText: 'Buscar Producto', contentPadding: EdgeInsets.all(5)),
-              ),
-            ),
-            ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  child:
-                      Text('M'), // no matter how big it is, it won't overflow
-                ),
-                title: const Text('Mayonesa'),
-                subtitle: const Text('Se usa para untar'),
-                enabled: true,
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: alertDialog,
-                ),
-                onTap: () {}),
-            ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  child:
-                      Text('M'), // no matter how big it is, it won't overflow
-                ),
-                title: const Text('Mayonesa'),
-                subtitle: const Text('Se usa para untar'),
-                enabled: true,
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {},
-                ),
-                onTap: () {})
-          ]).toList(),
-        ),*/
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+                );
+              }
+              if (snapshot.connectionState == ConnectionState.none &&
+                  snapshot.hasData == null) {
+                //print('project snapshot data is: ${projectSnap.data}');
+                return Container();
+              }
+              print('newBuild');
+              String imageUrl =
+                  '${FlavorConfig.instance.flavorValues.baseUrl + ServerConstants.getProducts}/file/download?a=${Random().nextInt(100)}&token=${Provider.of<AuthService>(context).token}';
+              return Expanded(
+                  child: RefreshIndicator(
+                      onRefresh: () => scroll(),
+                      child: ListView.builder(
+                          physics: AlwaysScrollableScrollPhysics(),
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (ctx, index) => Column(
+                                children: <Widget>[
+                                  ListTile(
+                                      leading: PhotoHero(
+                                          id: snapshot.data[index].productoId,
+                                          name: snapshot.data[index].nombre,
+                                          imageUrl:
+                                              '$imageUrl&productoId=${snapshot.data[index].productoId}&size=128x128',
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute<void>(builder:
+                                                    (BuildContext context) {
+                                              return Details(
+                                                id: snapshot
+                                                    .data[index].productoId,
+                                                imageUrl:
+                                                    '$imageUrl&size=500x500',
+                                              );
+                                            }));
+                                          }),
+                                      title: Text(snapshot.data[index].nombre),
+                                      subtitle: Text(snapshot
+                                              .data[index].costoProduccion
+                                              .toString() +
+                                          "Bs"),
+                                      enabled: true,
+                                      trailing: IconButton(
+                                        icon: Icon(Icons.delete),
+                                        onPressed: alertDialog,
+                                      ),
+                                      onTap: () {}),
+                                  Divider(
+                                    height: 0,
+                                  )
+                                ],
+                              ))));
+            },
+          ),
+        ],
+      )), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 

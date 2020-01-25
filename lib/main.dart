@@ -1,33 +1,72 @@
+import 'package:costos_operativos/auth_service.dart';
+import 'package:costos_operativos/config/flavor_config.dart';
+import 'package:costos_operativos/login_page.dart';
 import 'package:costos_operativos/my_home_page.dart';
+import 'package:costos_operativos/splash_page.dart';
+import 'package:costos_operativos/stateful_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stetho/flutter_stetho.dart';
+import 'package:provider/provider.dart';
 
+void main() {
+  FlavorConfig(
+      flavor: Flavor.DEV,
+      flavorValues: FlavorValues(baseUrl: "http://192.168.1.84:8081"));
 
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.dumpErrorToConsole(details);
+    MyHomePage().createState().alertDialog();
+  };
 
+  Stetho.initialize();
 
-void main() => runApp(MyApp());
+  runApp(ChangeNotifierProvider<AuthService>(
+    child: MyApp(),
+    create: (BuildContext context) {
+      return AuthService();
+    },
+  ));
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
+  Future _getThingsOnStartup(BuildContext context) async {
+    Provider.of<AuthService>(context).getToken();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
-    var _title = 'Gestión Costos Operativos';
-    return GestureDetector(
-        onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
 
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        },
-        child: MaterialApp(
-          title: _title,
-          theme: ThemeData(
-            brightness: Brightness.light,
-            primaryColor: Colors.blue[600],
-            accentColor: Colors.lightBlue[900],
-            //primarySwatch: Colors.blue,
-          ),
-          home: MyHomePage(),
-        ));
+    var _title = 'Gestión Costos Operativos';
+    return StatefulWrapper(
+      onInit: () {
+        /*_getThingsOnStartup(context ).then((value) {
+          print('Async done');
+        });*/
+      },
+      child: GestureDetector(
+          onTap: () {
+            FocusScopeNode currentFocus = FocusScope.of(context);
+
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+          },
+          child: Consumer<AuthService>(builder: (ctx, auth, _) => MaterialApp(
+            title: _title,
+            theme: ThemeData(
+              brightness: Brightness.light,
+              primaryColor: Colors.blue[600],
+              accentColor: Colors.lightBlue[900],
+              //primarySwatch: Colors.blue,
+            ),
+            home: auth.token != null ? MyHomePage() : FutureBuilder(future: auth.getToken(), builder: (ctx, snapshot) => snapshot.connectionState == ConnectionState.waiting ? SplashPage() : LoginPage(),),
+            //home: MyHomePage(),
+          ),)
+    ),
+    );
   }
 }

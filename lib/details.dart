@@ -1,10 +1,10 @@
 import 'package:costos_operativos/photo_hero.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class Details extends StatefulWidget {
-  Details({Key key, this.tagId}) : super(key: key);
-  final String tagId;
+  Details({Key key, @required this.id, @required this.imageUrl}) : super(key: key);
+  final int id;
+  final String imageUrl;
   final String title = 'Producto';
 
   @override
@@ -12,7 +12,6 @@ class Details extends StatefulWidget {
 }
 
 class _DetailsState extends State<Details> {
-  int _act = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +27,15 @@ class _DetailsState extends State<Details> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(8.0),
+            child: PhotoHero(
+                id: widget.id,
+                imageUrl: '${widget.imageUrl}&productoId=${widget.id}',
+                name: 'Mayonesa',
+                width: 150.0,
+                radius: 75,
+                onTap: () {}),
           ),
-          PhotoHero(
-              tagId: 'images/flippers-alpha.png',
-              name: 'Mayonesa',
-              width: 200.0,
-              radius: 100,
-              onTap: () {})
+
         ],
       ) /*ListView(
 

@@ -25,10 +25,18 @@ dependencies:
   cupertino_icons: ^0.1.2
   flutter_speed_dial: ^1.2.5
   cached_network_image: ^2.0.0
+  json_annotation: ^3.0.1
+  dio: 3.0.8
+  provider: ^4.0.1
+  flutter_secure_storage: ^3.3.1+1
+  flutter_stetho: ^0.5.2
+  #http: ^0.12.0+4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^1.7.2
+  json_serializable: ^3.2.5
 
 
 # For information on the generic Dart part of this file, see the
