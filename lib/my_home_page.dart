@@ -103,7 +103,9 @@ class _MyHomePageState extends State<MyHomePage> {
               leading: Icon(Icons.exit_to_app),
               title: Text('Cerrar Sesión'),
               onTap: () {
+
                 Provider.of<AuthService>(context, listen: false).logout();
+
               },
             ),
           ],
@@ -138,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
               }
               print('newBuild');
               String imageUrl =
-                  '${FlavorConfig.instance.flavorValues.baseUrl + ServerConstants.getProducts}/file/download?a=${Random().nextInt(100)}&token=${Provider.of<AuthService>(context).token}';
+                  '${FlavorConfig.instance.flavorValues.baseUrl + ServerConstants.getProducts}/file/download?token=${Provider.of<AuthService>(context).token}';
               return Expanded(
                   child: RefreshIndicator(
                       onRefresh: () => scroll(),

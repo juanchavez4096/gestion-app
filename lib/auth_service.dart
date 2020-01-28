@@ -80,8 +80,8 @@ class AuthService extends ChangeNotifier {
   }
 
   // logs in the user if password matches
-  loginUser({@required String email, @required String password, @required BuildContext context}) {
-    UserService().login(email, password, _dio).then( (value) async {
+  Future<void> loginUser({@required String email, @required String password, @required BuildContext context}) async {
+    return UserService().login(email, password, _dio).then( (value) async {
       print(value.data);
         setToken(context, value.data['token']);
         notifyListeners();

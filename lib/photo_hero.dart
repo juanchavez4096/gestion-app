@@ -34,9 +34,9 @@ class PhotoHero extends StatelessWidget {
                 child: imageUrl != null
                     ? ClipOval(
                         child: CachedNetworkImage(
-                          placeholder: (context, url) => Padding(
-                            padding: EdgeInsets.all(10),
-                            child: CircularProgressIndicator(),
+                          placeholder: (context, url) => const Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: const CircularProgressIndicator(),
                           ),
                           imageUrl: imageUrl,
                           errorWidget: (context, url, error) =>
@@ -44,7 +44,6 @@ class PhotoHero extends StatelessWidget {
                         ),
                       )
                     : Text(getInitials())
-                //child: FadeInImage.memoryNetwork( image: 'https://juanjchavez.com/img/questions-suit-guy.png', placeholder: ,),
                 ) /*Image.asset(
               photo,
               fit: BoxFit.contain,

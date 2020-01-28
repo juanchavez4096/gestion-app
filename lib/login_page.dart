@@ -18,41 +18,40 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Login Page Flutter Firebase"),
+          title: const Text('Gestion Costos Operativos'),
         ),
         body: Center(
           child: SingleChildScrollView(
             child: Container(
-                padding: EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Form(
                     key: _formKey,
                     child: SingleChildScrollView(
                       child: Column(
                         children: <Widget>[
-                          SizedBox(height: 20.0),
-                          Text(
+                          const SizedBox(height: 20.0),
+                          const Text(
                             'Login Information',
                             style: TextStyle(fontSize: 20),
                           ),
-                          SizedBox(height: 20.0),
+                          const SizedBox(height: 20.0),
                           TextFormField(
                               onSaved: (value) => _email = value,
                               keyboardType: TextInputType.emailAddress,
                               autovalidate: true,
                               decoration:
-                                  InputDecoration(labelText: "Email Address")),
+                                  const InputDecoration(labelText: "Email Address")),
                           TextFormField(
                               onSaved: (value) => _password = value,
                               obscureText: true,
-                              decoration:
-                                  InputDecoration(labelText: "Password")),
-                          SizedBox(height: 20.0),
+                              decoration: const InputDecoration(labelText: "Password")),
+                          const SizedBox(height: 20.0),
                           _isLoading
-                              ? CircularProgressIndicator()
+                              ? const CircularProgressIndicator()
                               : RaisedButton(
-                                  child: Text("LOGIN"),
+                                  child: const Text("LOGIN"),
+
                                   onPressed: () async {
-                                    // save the fields..
                                     final form = _formKey.currentState;
                                     form.save();
 
@@ -61,17 +60,18 @@ class _LoginPageState extends State<LoginPage> {
                                       try {
                                         setState(() {
                                           _isLoading = true;
-                                          print('state trur');
                                         });
-                                        await Provider.of<AuthService>(context,
+                                        Provider.of<AuthService>(context,
                                                 listen: false)
                                             .loginUser(
                                                 email: _email,
                                                 password: _password,
-                                                context: context);
-                                        setState(() {
-                                          _isLoading = false;
+                                                context: context).then((_) {
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
                                         });
+
                                       } catch (e) {
                                         setState(() {
                                           _isLoading = false;

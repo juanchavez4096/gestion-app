@@ -29,33 +29,19 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-
-  Future _getThingsOnStartup(BuildContext context) async {
-    Provider.of<AuthService>(context).getToken();
-  }
-
-
-
   @override
   Widget build(BuildContext context) {
+    const _title = 'Gestión Costos Operativos';
+    return GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
 
-    var _title = 'Gestión Costos Operativos';
-    return StatefulWrapper(
-      onInit: () {
-        /*_getThingsOnStartup(context ).then((value) {
-          print('Async done');
-        });*/
-      },
-      child: GestureDetector(
-          onTap: () {
-            FocusScopeNode currentFocus = FocusScope.of(context);
-
-            if (!currentFocus.hasPrimaryFocus) {
-              currentFocus.unfocus();
-            }
-          },
-          child: Consumer<AuthService>(builder: (ctx, auth, _) => MaterialApp(
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Consumer<AuthService>(
+          builder: (ctx, auth, _) => MaterialApp(
             title: _title,
             theme: ThemeData(
               brightness: Brightness.light,
@@ -63,10 +49,16 @@ class MyApp extends StatelessWidget {
               accentColor: Colors.lightBlue[900],
               //primarySwatch: Colors.blue,
             ),
-            home: auth.token != null ? MyHomePage() : FutureBuilder(future: auth.getToken(), builder: (ctx, snapshot) => snapshot.connectionState == ConnectionState.waiting ? SplashPage() : LoginPage(),),
-            //home: MyHomePage(),
-          ),)
-    ),
-    );
+            home: auth.token != null
+                ? MyHomePage()
+                : FutureBuilder(
+                    future: auth.getToken(),
+                    builder: (ctx, snapshot) =>
+                        snapshot.connectionState == ConnectionState.waiting
+                            ? SplashPage()
+                            : LoginPage(),
+                  ),
+          ),
+        ));
   }
 }
