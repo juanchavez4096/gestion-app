@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:costos_operativos/class/user.dart';
 import 'package:costos_operativos/config/flavor_config.dart';
+import 'package:costos_operativos/model/user.dart';
 import 'package:costos_operativos/service/user_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +59,7 @@ class AuthService extends ChangeNotifier {
   }
 
   logout() {
+
     this.currentUser = null;
     this.token = null;
     storage.deleteAll();

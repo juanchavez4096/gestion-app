@@ -3,7 +3,6 @@ import 'package:costos_operativos/config/flavor_config.dart';
 import 'package:costos_operativos/login_page.dart';
 import 'package:costos_operativos/my_home_page.dart';
 import 'package:costos_operativos/splash_page.dart';
-import 'package:costos_operativos/stateful_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:provider/provider.dart';
@@ -11,11 +10,11 @@ import 'package:provider/provider.dart';
 void main() {
   FlavorConfig(
       flavor: Flavor.DEV,
-      flavorValues: FlavorValues(baseUrl: "http://192.168.1.84:8081"));
+      flavorValues: FlavorValues(baseUrl: "http://10.90.53.62:8081"));
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(details);
-    MyHomePage().createState().alertDialog();
+    //MyHomePage().createState().alertDialog();
   };
 
   Stetho.initialize();

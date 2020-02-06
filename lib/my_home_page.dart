@@ -1,9 +1,7 @@
-import 'dart:convert';
-import 'dart:math';
-
-import 'package:costos_operativos/class/producto.dart';
 import 'package:costos_operativos/config/flavor_config.dart';
 import 'package:costos_operativos/details.dart';
+import 'package:costos_operativos/model/producto.dart';
+import 'package:costos_operativos/model/selection.dart';
 import 'package:costos_operativos/photo_hero.dart';
 import 'package:costos_operativos/service/productos_service.dart';
 import 'package:dio/dio.dart';
@@ -15,13 +13,14 @@ import 'auth_service.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
-  final String title = 'Productos';
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Selection selection = Selection.PRODUCTOS;
+
   Future<Null> scroll() async {
     setState(() {
       products = this.getProducts();
@@ -47,17 +46,24 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(SelectionHelper.getSelectionString(selection)),
       ),
-      floatingActionButton: SpeedDial(
-        backgroundColor: Theme.of(context).primaryColor,
-        animatedIcon: AnimatedIcons.menu_close,
-        overlayOpacity: 0,
-        children: [
-          SpeedDialChild(child: Icon(Icons.add), label: 'Agregar Producto'),
-          SpeedDialChild(child: Icon(Icons.receipt), label: 'Reporte')
-        ],
-      ),
+      floatingActionButton: selection == Selection.PRODUCTOS ||
+              selection == Selection.MATERIALES ||
+              selection == Selection.ADMINISTRACION
+          ? SpeedDial(
+              backgroundColor: Theme.of(context).primaryColor,
+              animatedIcon: AnimatedIcons.menu_close,
+              overlayOpacity: 0,
+              children: [
+                SpeedDialChild(
+                    child: Icon(Icons.add),
+                    label:
+                        'Agregar ${SelectionHelper.getSingularString(selection)}'),
+                SpeedDialChild(child: Icon(Icons.receipt), label: 'Reporte'),
+              ],
+            )
+          : null,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -75,46 +81,82 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.message),
+              leading: const Icon(Icons.message),
               title: Text('Productos'),
-              onTap: () {},
+              selected: selection == Selection.PRODUCTOS,
+              onTap: () {
+                if (selection != Selection.PRODUCTOS) {
+                  setState(() {
+                    selection = Selection.PRODUCTOS;
+                  });
+                }
+                Navigator.of(context).pop();
+              },
             ),
             ListTile(
-              leading: Icon(Icons.account_circle),
+              leading: const Icon(Icons.account_circle),
               title: Text('Materiales'),
-              onTap: () {},
+              selected: selection == Selection.MATERIALES,
+              onTap: () {
+                if (selection != Selection.MATERIALES) {
+                  setState(() {
+                    selection = Selection.MATERIALES;
+                  });
+                }
+                Navigator.of(context).pop();
+              },
             ),
             ListTile(
-              leading: Icon(Icons.group),
+              leading: const Icon(Icons.group),
               title: Text('Administración'),
-              onTap: () {},
+              selected: selection == Selection.ADMINISTRACION,
+              onTap: () {
+                if (selection != Selection.ADMINISTRACION) {
+                  setState(() {
+                    selection = Selection.ADMINISTRACION;
+                  });
+                }
+                Navigator.of(context).pop();
+              },
             ),
             ListTile(
-              leading: Icon(Icons.account_circle),
+              leading: const Icon(Icons.account_circle),
               title: Text('Perfil'),
-              onTap: () {},
+              selected: selection == Selection.PERFIL,
+              onTap: () {
+                if (selection != Selection.PERFIL) {
+                  setState(() {
+                    selection = Selection.PERFIL;
+                  });
+                }
+                Navigator.of(context).pop();
+              },
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Configuracion'),
-              onTap: () {},
+              leading: const Icon(Icons.settings),
+              title: Text('Configuración'),
+              selected: selection == Selection.CONFIGURACION,
+              onTap: () {
+                if (selection != Selection.CONFIGURACION) {
+                  setState(() {
+                    selection = Selection.CONFIGURACION;
+                  });
+                }
+                Navigator.of(context).pop();
+              },
             ),
             ListTile(
-              leading: Icon(Icons.exit_to_app),
+              leading: const Icon(Icons.exit_to_app),
               title: Text('Cerrar Sesión'),
               onTap: () {
-
+                Navigator.of(context).pop();
                 Provider.of<AuthService>(context, listen: false).logout();
-
               },
             ),
           ],
         ),
       ),
       body: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
-
           child: Column(
         children: <Widget>[
           TextFormField(
@@ -138,7 +180,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 //print('project snapshot data is: ${projectSnap.data}');
                 return Container();
               }
-              print('newBuild');
               String imageUrl =
                   '${FlavorConfig.instance.flavorValues.baseUrl + ServerConstants.getProducts}/file/download?token=${Provider.of<AuthService>(context).token}';
               return Expanded(
@@ -175,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       enabled: true,
                                       trailing: IconButton(
                                         icon: Icon(Icons.delete),
-                                        onPressed: alertDialog,
+                                        onPressed: () => alertDialog(),
                                       ),
                                       onTap: () {}),
                                   Divider(
