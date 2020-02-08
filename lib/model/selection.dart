@@ -3,7 +3,8 @@ enum Selection{
   MATERIALES,
   ADMINISTRACION,
   PERFIL,
-  CONFIGURACION
+  SETTINGS,
+  HELP
 }
 
 class SelectionHelper{
@@ -21,8 +22,11 @@ class SelectionHelper{
       case Selection.PERFIL:
         return 'Perfil';
         break;
-      case Selection.CONFIGURACION:
-        return 'Configuración';
+      case Selection.SETTINGS:
+        return 'Preferencias';
+        break;
+      case Selection.HELP:
+        return 'Ayuda';
         break;
     }
   }
@@ -41,8 +45,11 @@ class SelectionHelper{
       case Selection.PERFIL:
         return 'Perfil';
         break;
-      case Selection.CONFIGURACION:
-        return 'Configuración';
+      case Selection.SETTINGS:
+        return 'Preferencias';
+        break;
+      case Selection.HELP:
+        return 'Ayuda';
         break;
     }
   }

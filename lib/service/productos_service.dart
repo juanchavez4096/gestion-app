@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
-import '../auth_service.dart';
+import 'auth_service.dart';
 
 class ProductosService {
 
