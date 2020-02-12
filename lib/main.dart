@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 void main() {
   FlavorConfig(
       flavor: Flavor.DEV,
-      flavorValues: FlavorValues(baseUrl: "http://192.168.1.84:8081"));
+      flavorValues: FlavorValues(baseUrl: "http://10.90.53.94:8081"));
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(details);
