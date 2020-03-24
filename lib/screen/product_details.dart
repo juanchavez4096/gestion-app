@@ -1,18 +1,36 @@
+import 'package:costos_operativos/model/producto.dart';
+import 'package:costos_operativos/service/productos_service.dart';
 import 'package:costos_operativos/widget/photo_hero.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-class Details extends StatefulWidget {
-  Details({Key key, @required this.id, @required this.imageUrl})
+class ProductDetails extends StatefulWidget {
+  ProductDetails({Key key, @required this.id, @required this.imageUrl, @required this.name})
       : super(key: key);
   final int id;
   final String imageUrl;
+  final String name;
   final String title = 'Producto';
 
   @override
-  _DetailsState createState() => _DetailsState();
+  _ProductDetailsState createState() => _ProductDetailsState();
 }
 
-class _DetailsState extends State<Details> {
+class _ProductDetailsState extends State<ProductDetails> {
+
+  Future<Producto> _product;
+
+  @override
+  void initState() {
+    super.initState();
+    //_product = this.getProduct();
+  }
+
+  Future<Producto> getProduct(String search) async {
+    Response response = await ProductosService().getProducts(context, search);
+    return Producto.fromJson(response.data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +48,7 @@ class _DetailsState extends State<Details> {
             child: PhotoHero(
                 id: widget.id,
                 imageUrl: '${widget.imageUrl}&productoId=${widget.id}',
-                name: 'Mayonesa',
+                name: widget.name,
                 width: 150.0,
                 radius: 75,
                 onTap: () {}),

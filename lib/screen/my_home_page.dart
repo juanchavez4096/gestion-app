@@ -21,6 +21,30 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
+  Widget getWidgetBySelection(){
+    switch(selection){
+
+      case Selection.PRODUCTOS:
+        return ProductList();
+        break;
+      case Selection.MATERIALES:
+        return Container();
+        break;
+      case Selection.ADMINISTRACION:
+        return Container();
+        break;
+      case Selection.PERFIL:
+        return Container();
+        break;
+      case Selection.SETTINGS:
+        return Container();
+        break;
+      case Selection.HELP:
+        return Container();
+        break;
+    }
+    return Container();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      body: selection == Selection.PRODUCTOS ? ProductList() : Container(), // This trailing comma makes auto-formatting nicer for build methods.
+      body: getWidgetBySelection(), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

@@ -4,8 +4,8 @@ enum ConfirmAction { CANCEL, ACCEPT }
 
 class MyAlertDialog {
 
-  static Future<ConfirmAction> confirmDialog(BuildContext context, String titulo, String contenido) async {
-    return showDialog<ConfirmAction>(
+  static Future<bool> confirmDialog(BuildContext context, String titulo, String contenido) async {
+    return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -16,13 +16,13 @@ class MyAlertDialog {
               textColor: Colors.grey,
               child: Text('Rechazar'),
               onPressed: () {
-                Navigator.of(context).pop(ConfirmAction.ACCEPT);
+                Navigator.of(context).pop(false);
               },
             ),
             FlatButton(
               textColor: Colors.red,
               child: Text('Aceptar'),
-              onPressed: () => Navigator.of(context).pop(ConfirmAction.ACCEPT),
+              onPressed: () => Navigator.of(context).pop(true),
             ),
           ],
         );

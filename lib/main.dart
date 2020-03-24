@@ -10,12 +10,7 @@ import 'package:provider/provider.dart';
 void main() {
   FlavorConfig(
       flavor: Flavor.DEV,
-      flavorValues: FlavorValues(baseUrl: "http://10.90.53.94:8081"));
-
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.dumpErrorToConsole(details);
-    //MyHomePage().createState().alertDialog();
-  };
+      flavorValues: FlavorValues(baseUrl: "https://gestion-costos-operativos.herokuapp.com"));
 
   Stetho.initialize();
 

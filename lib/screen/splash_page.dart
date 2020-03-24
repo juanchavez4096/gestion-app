@@ -11,7 +11,7 @@ class SplashPage extends StatelessWidget{
           child: Center(
             child: Padding(
               padding: EdgeInsets.all(100),
-              child: const LinearProgressIndicator(),
+              child: const CircularProgressIndicator(),
             ) ,
           )
         )

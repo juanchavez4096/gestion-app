@@ -7,7 +7,11 @@ import 'auth_service.dart';
 
 class ProductosService {
 
-  Future<Response> getProducts(BuildContext context) async {
-    return Provider.of<AuthService>(context, listen: false).dio.get('${ServerConstants.getProducts}/all');
+  Future<Response> getProducts(BuildContext context, String search) async {
+    return Provider.of<AuthService>(context, listen: false).dio.get('${ServerConstants.getProducts}/all?search=$search');
+  }
+
+  Future<Response> getProduct(BuildContext context, int id) async {
+    return Provider.of<AuthService>(context, listen: false).dio.get('${ServerConstants.getProducts}/byId?id=$id');
   }
 }

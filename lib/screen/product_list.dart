@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:costos_operativos/config/flavor_config.dart';
 import 'package:costos_operativos/model/producto.dart';
 import 'package:costos_operativos/service/productos_service.dart';
@@ -17,9 +19,17 @@ class ProductList extends StatefulWidget{
 }
 
 class _ProductListState extends State<ProductList>{
+
+  Future<List<Producto>> _products;
+  int total;
+  int pageSize;
+
+  final _searchQuery = new TextEditingController();
+  Timer _debounce;
+
   Future<Null> scroll() async {
     setState(() {
-      products = this.getProducts();
+      _products = this.getProducts(_searchQuery.toString());
     });
     return null;
   }
@@ -27,15 +37,30 @@ class _ProductListState extends State<ProductList>{
   @override
   void initState() {
     super.initState();
-    products = this.getProducts();
+    _searchQuery.addListener(_onSearchChanged);
+    _products = this.getProducts('');
   }
 
-  Future<List<Producto>> products;
+  @override
+  void dispose() {
+    _searchQuery.removeListener(_onSearchChanged);
+    _searchQuery.dispose();
+    super.dispose();
+  }
 
-  Future<List<Producto>> getProducts() async {
-    Response response = await ProductosService().getProducts(context);
+  Future<List<Producto>> getProducts(String search) async {
+    Response response = await ProductosService().getProducts(context, search);
     List i = response.data['content'];
+    total = response.data['totalElements'];
+    pageSize = response.data['size'];
     return i.map((m) => Producto.fromJson(m)).toList();
+  }
+
+  _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _products = this.getProducts(_searchQuery.toString());
+    });
   }
 
   @override
@@ -44,12 +69,13 @@ class _ProductListState extends State<ProductList>{
         child: Column(
           children: <Widget>[
             TextFormField(
+              controller: _searchQuery,
               decoration: InputDecoration(
                   labelText: 'Buscar Producto',
                   contentPadding: EdgeInsets.all(5)),
             ),
             FutureBuilder<List<Producto>>(
-              future: products,
+              future: _products,
               builder: (ctx, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting ||
                     snapshot.connectionState == ConnectionState.active) {
@@ -80,15 +106,19 @@ class _ProductListState extends State<ProductList>{
                                     Navigator.of(context).push(
                                         MaterialPageRoute<void>(builder:
                                             (BuildContext context) {
-                                          return Details(
+                                          return ProductDetails(
                                             id: snapshot.data[index].productoId,
+                                            name: snapshot.data[index].nombre,
                                             imageUrl:
                                             '$imageUrl&size=500x500',
                                           );
                                         }));
                                   }, //goToDetails(snapshot.data[index].productoId, imageUrl),
                                   onDelete: () async {
-                                    await MyAlertDialog.confirmDialog(context, 'Confirmar', 'Se borrará el producto y no podrá ser devuelto. Los materiales asociados a este producto no se verán afectados. También se borrará la imagen de este producto. ¿Estás de acuerdo?');
+                                    bool confirmAction = await MyAlertDialog.confirmDialog(context, 'Confirmar', 'Se borrará el producto y no podrá ser devuelto. Los materiales asociados a este producto no se verán afectados. También se borrará la imagen de este producto. ¿Estás de acuerdo?');
+                                    if(confirmAction){
+                                      //TODO delete producto and refresh
+                                    }
                                   },
                                   imageUrl: '$imageUrl&productoId=${snapshot.data[index].productoId}&size=128x128',
                                   name: snapshot.data[index].nombre,
